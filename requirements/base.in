@@ -1,0 +1,12 @@
+django
+djangorestframework
+drf-yasg
+psycopg2-binary
+django-environ
+urllib3<2
+django-storages
+boto3
+Pillow
+dj_database_url
+sentry-sdk[django]
+django-cors-headers
