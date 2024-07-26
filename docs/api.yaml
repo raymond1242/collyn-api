@@ -1,0 +1,264 @@
+swagger: '2.0'
+info:
+  title: API
+  description: API for the project.
+  version: v1
+host: localhost:8000
+schemes:
+- http
+basePath: /api/order
+consumes:
+- application/json
+produces:
+- application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+- Basic: []
+paths:
+  /auth/login:
+    post:
+      operationId: auth_login
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/UserLogin'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Token'
+      tags:
+      - auth
+    parameters: []
+  /orders:
+    get:
+      operationId: orders_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Order'
+      tags:
+      - orders
+    post:
+      operationId: orders_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Order'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Order'
+      tags:
+      - orders
+    parameters: []
+  /orders/{id}:
+    get:
+      operationId: orders_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Order'
+      tags:
+      - orders
+    put:
+      operationId: orders_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Order'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Order'
+      tags:
+      - orders
+    patch:
+      operationId: orders_partial_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Order'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Order'
+      tags:
+      - orders
+    delete:
+      operationId: orders_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - orders
+    parameters:
+    - name: id
+      in: path
+      description: A UUID string identifying this order.
+      required: true
+      type: string
+      format: uuid
+definitions:
+  UserLogin:
+    required:
+    - username
+    - password
+    type: object
+    properties:
+      username:
+        title: Username
+        type: string
+        maxLength: 255
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        maxLength: 255
+        minLength: 1
+  User:
+    description: User object
+    required:
+    - username
+    type: object
+    properties:
+      username:
+        title: Username
+        description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+          only.
+        type: string
+        pattern: ^[\w.@+-]+$
+        maxLength: 150
+        minLength: 1
+  Token:
+    required:
+    - user
+    type: object
+    properties:
+      user:
+        $ref: '#/definitions/User'
+  OrderImage:
+    required:
+    - order
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        format: uuid
+        readOnly: true
+      image:
+        title: Image
+        type: string
+        readOnly: true
+        x-nullable: true
+        format: uri
+      order:
+        title: Order
+        type: string
+        format: uuid
+  Order:
+    required:
+    - name
+    - description
+    - registration_place
+    - shipping_place
+    - shipping_date
+    - company
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        format: uuid
+        readOnly: true
+      images:
+        type: array
+        items:
+          $ref: '#/definitions/OrderImage'
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        minLength: 1
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      updated_at:
+        title: Updated at
+        type: string
+        format: date-time
+        readOnly: true
+      price:
+        title: Price
+        type: string
+        format: decimal
+      advance_payment:
+        title: Advance payment
+        type: string
+        format: decimal
+      discount:
+        title: Discount
+        type: string
+        format: decimal
+      pending_payment:
+        title: Pending payment
+        type: string
+        format: decimal
+      registration_place:
+        title: Registration place
+        type: string
+        maxLength: 100
+        minLength: 1
+      shipping_place:
+        title: Shipping place
+        type: string
+        maxLength: 100
+        minLength: 1
+      shipping_date:
+        title: Shipping date
+        type: string
+        format: date-time
+      has_production:
+        title: Has production
+        type: boolean
+      delivered:
+        title: Delivered
+        type: boolean
+      company:
+        title: Company
+        type: integer

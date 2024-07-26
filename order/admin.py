@@ -1,3 +1,17 @@
 from django.contrib import admin
+from order.models import Order, Company, Location
 
-# Register your models here.
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Company)
+class CompanyAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Location)
+class LocationAdmin(admin.ModelAdmin):
+    pass

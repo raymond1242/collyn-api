@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,15 +21,36 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-+)#f+t^9g_wh)88(08jd9f6*+!vur#vvt25%)j*yl_-=ed6p2w"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default="dummy")
+
+IS_PRODUCTION = os.environ.get("ENVIRON", default="local") == "production"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = not IS_PRODUCTION
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get(
+    "DJANGO_ALLOWED_HOSTS", default="localhost,127.0.0.1,0.0.0.0"
+).split(",")
 
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    "DJANGO_CSRF_TRUSTED_ORIGINS", default="http://locahost,http://0.0.0.0"
+).split(",")
+
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
+
+EXTERNAL_APPS = [
+    "rest_framework",
+    "rest_framework.authtoken",
+    "corsheaders",
+    "drf_yasg",
+]
+
+CUSTOM_APPS = [
+    "order",
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -39,7 +61,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
+INSTALLED_APPS = INSTALLED_APPS + CUSTOM_APPS + EXTERNAL_APPS
+
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -67,17 +92,27 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "api.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
+# Swagger settings
+SWAGGER_SETTINGS = {
+    "DEFAULT_INFO": "docs.settings.api_info",
+    "DEFAULT_GENERATOR": "docs.settings.APISchemeGenerator",
+    "DEFAULT_API_URL": "http://localhost:8000",
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_NAME", "postgres"),
+        "USER": os.environ.get("POSTGRES_USER", "user"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
+        "HOST": os.environ.get("POSTGRES_HOST", "db"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+    },
 }
 
 
@@ -105,7 +140,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "America/Bogota"
 
 USE_I18N = True
 
