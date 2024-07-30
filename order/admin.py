@@ -9,7 +9,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("name", "user")
 
 
 @admin.register(Location)

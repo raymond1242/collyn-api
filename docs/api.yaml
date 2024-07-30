@@ -35,6 +35,23 @@ paths:
       tags:
       - auth
     parameters: []
+  /company/{username}:
+    get:
+      operationId: company_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Company'
+      tags:
+      - company
+    parameters:
+    - name: username
+      in: path
+      required: true
+      type: string
   /orders:
     get:
       operationId: orders_list
@@ -160,10 +177,32 @@ definitions:
   Token:
     required:
     - user
+    - key
     type: object
     properties:
       user:
         $ref: '#/definitions/User'
+      key:
+        title: Key
+        description: Token key
+        type: string
+        minLength: 1
+  Company:
+    required:
+    - name
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      logo:
+        title: Logo
+        type: string
+        readOnly: true
+        x-nullable: true
+        format: uri
   OrderImage:
     required:
     - order

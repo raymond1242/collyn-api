@@ -29,7 +29,8 @@ class UserLoginSerializer(serializers.Serializer):
 
 class TokenSerializer(serializers.Serializer):
     user = UserSerializer(required=True, help_text="User object")
+    key = serializers.CharField(required=True, help_text="Token key")
 
     class Meta:
         model = Token
-        fields = ["key"]
+        fields = ["user", "key"]
