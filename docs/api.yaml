@@ -74,7 +74,7 @@ paths:
         in: body
         required: true
         schema:
-          $ref: '#/definitions/Order'
+          $ref: '#/definitions/OrderCreate'
       responses:
         '201':
           description: ''
@@ -83,66 +83,6 @@ paths:
       tags:
       - orders
     parameters: []
-  /orders/{id}:
-    get:
-      operationId: orders_read
-      description: ''
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          schema:
-            $ref: '#/definitions/Order'
-      tags:
-      - orders
-    put:
-      operationId: orders_update
-      description: ''
-      parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/Order'
-      responses:
-        '200':
-          description: ''
-          schema:
-            $ref: '#/definitions/Order'
-      tags:
-      - orders
-    patch:
-      operationId: orders_partial_update
-      description: ''
-      parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/Order'
-      responses:
-        '200':
-          description: ''
-          schema:
-            $ref: '#/definitions/Order'
-      tags:
-      - orders
-    delete:
-      operationId: orders_delete
-      description: ''
-      parameters: []
-      responses:
-        '204':
-          description: ''
-      tags:
-      - orders
-    parameters:
-    - name: id
-      in: path
-      description: A UUID string identifying this order.
-      required: true
-      type: string
-      format: uuid
 definitions:
   UserLogin:
     required:
@@ -204,25 +144,14 @@ definitions:
         x-nullable: true
         format: uri
   OrderImage:
-    required:
-    - order
     type: object
     properties:
-      id:
-        title: Id
-        type: string
-        format: uuid
-        readOnly: true
       image:
         title: Image
         type: string
         readOnly: true
         x-nullable: true
         format: uri
-      order:
-        title: Order
-        type: string
-        format: uuid
   Order:
     required:
     - name
@@ -301,3 +230,64 @@ definitions:
       company:
         title: Company
         type: integer
+  OrderCreate:
+    required:
+    - name
+    - description
+    - registration_place
+    - shipping_place
+    - shipping_date
+    - images
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        minLength: 1
+      price:
+        title: Price
+        type: string
+        format: decimal
+      advance_payment:
+        title: Advance payment
+        type: string
+        format: decimal
+      discount:
+        title: Discount
+        type: string
+        format: decimal
+      pending_payment:
+        title: Pending payment
+        type: string
+        format: decimal
+      registration_place:
+        title: Registration place
+        type: string
+        maxLength: 100
+        minLength: 1
+      shipping_place:
+        title: Shipping place
+        type: string
+        maxLength: 100
+        minLength: 1
+      shipping_date:
+        title: Shipping date
+        type: string
+        format: date-time
+      has_production:
+        title: Has production
+        type: boolean
+      delivered:
+        title: Delivered
+        type: boolean
+      images:
+        type: array
+        items:
+          type: string
+          readOnly: true
+          format: uri

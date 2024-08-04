@@ -2,12 +2,6 @@ from rest_framework import serializers
 from order.models import Order, Company, Location, OrderImage
 
 
-class CompanySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Company
-        fields = "__all__"
-
-
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
@@ -17,11 +11,11 @@ class LocationSerializer(serializers.ModelSerializer):
 class OrderImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderImage
-        fields = "__all__"
+        fields = ["image"]
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    images = OrderImageSerializer(many=True, read_only=True, source="orderimage_set")
+    images = OrderImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
@@ -29,6 +23,22 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderCreateSerializer(serializers.ModelSerializer):
+    images = serializers.ListField(child=serializers.ImageField(), write_only=True)
+    shipping_date = serializers.DateTimeField(input_formats=["%Y-%m-%dT%H:%M"])
+
     class Meta:
         model = Order
-        fields = "__all__"
+        fields = [
+            "name",
+            "description",
+            "price",
+            "advance_payment",
+            "discount",
+            "pending_payment",
+            "registration_place",
+            "shipping_place",
+            "shipping_date",
+            "has_production",
+            "delivered",
+            "images",
+        ]
