@@ -83,6 +83,30 @@ paths:
       tags:
       - orders
     parameters: []
+  /orders/{id}/update_delivered:
+    put:
+      operationId: orders_update_delivered
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/OrderUpdateDelivered'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Order'
+      tags:
+      - orders
+    parameters:
+    - name: id
+      in: path
+      description: A UUID string identifying this order.
+      required: true
+      type: string
+      format: uuid
 definitions:
   UserLogin:
     required:
@@ -291,3 +315,9 @@ definitions:
           type: string
           readOnly: true
           format: uri
+  OrderUpdateDelivered:
+    type: object
+    properties:
+      delivered:
+        title: Delivered
+        type: boolean

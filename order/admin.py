@@ -11,6 +11,7 @@ class OrderAdmin(admin.ModelAdmin):
 class OrderImage(admin.ModelAdmin):
     list_display = ("order", "image")
 
+
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ("name", "user")

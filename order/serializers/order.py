@@ -22,6 +22,12 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class OrderUpdateDeliveredSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ["delivered"]
+
+
 class OrderCreateSerializer(serializers.ModelSerializer):
     images = serializers.ListField(child=serializers.ImageField(), write_only=True)
     shipping_date = serializers.DateTimeField(input_formats=["%Y-%m-%dT%H:%M"])
