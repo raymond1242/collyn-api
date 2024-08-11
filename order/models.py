@@ -21,6 +21,7 @@ class Location(models.Model):
 class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     name = models.CharField(max_length=255)
+    product = models.CharField(max_length=255, default="")
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -36,6 +37,10 @@ class Order(models.Model):
     shipping_date = models.DateTimeField()
     has_production = models.BooleanField(default=False)
     delivered = models.BooleanField(default=False)
+
+    @staticmethod
+    def generate_code(length=5):
+        return uuid4().hex[:length].upper()
 
 
 class OrderImage(models.Model):

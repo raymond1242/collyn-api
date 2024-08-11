@@ -1,26 +1,74 @@
+from uuid import uuid4
+
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
+
 from order.models import Order, OrderImage
-from order.serializers.order import OrderSerializer, OrderCreateSerializer, OrderUpdateDeliveredSerializer
+from order.serializers.order import (
+    OrderSerializer,
+    OrderCreateSerializer,
+    OrderUpdateDeliveredSerializer,
+)
+
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-from rest_framework.response import Response
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+
+
+def generate_code(length=5):
+    return uuid4().hex[:length].upper()
 
 
 class OrderViewSet(
     mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
 ):
+    authentication_classes = [TokenAuthentication]
     queryset = Order.objects.all()
+
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
 
-    @swagger_auto_schema(responses={status.HTTP_200_OK: OrderSerializer(many=True)})
+    def get_queryset(self):
+        return (
+            super(OrderViewSet, self)
+            .get_queryset()
+            .filter(
+                company__user=self.request.user,
+            )
+        )
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "shipping_start_date",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="shipping_start_date",
+            ),
+            openapi.Parameter(
+                "shipping_end_date",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="shipping_date",
+            ),
+        ]
+    )
     def list(self, request, *args, **kwargs):
-        company = self.request.user.company
-        return super().list(request, *args, company=company, **kwargs)
+        shipping_start_date = request.query_params.get("shipping_start_date")
+        shipping_end_date = request.query_params.get("shipping_end_date")
+        print(f"shipping_date: {shipping_start_date} - {shipping_end_date}")
+        if shipping_start_date and shipping_end_date:
+            queryset = self.queryset.filter(
+                shipping_date__range=[shipping_start_date, shipping_end_date]
+            )
+        else:
+            queryset = self.queryset
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         request_body=OrderCreateSerializer,
@@ -42,7 +90,9 @@ class OrderViewSet(
         request_body=OrderUpdateDeliveredSerializer,
         responses={status.HTTP_200_OK: OrderSerializer},
     )
-    @action(methods=["PUT"], detail=True, serializer_class=OrderUpdateDeliveredSerializer)
+    @action(
+        methods=["PUT"], detail=True, serializer_class=OrderUpdateDeliveredSerializer
+    )
     def update_delivered(self, request, pk=None):
         order = self.get_object()
         serializer = self.get_serializer(order, data=request.data)
