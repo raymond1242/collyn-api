@@ -36,6 +36,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             "name",
+            "product",
             "description",
             "price",
             "advance_payment",

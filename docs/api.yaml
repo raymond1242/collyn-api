@@ -212,7 +212,6 @@ definitions:
       product:
         title: Product
         type: string
-        maxLength: 255
         minLength: 1
       description:
         title: Description
@@ -281,6 +280,10 @@ definitions:
         title: Name
         type: string
         maxLength: 255
+        minLength: 1
+      product:
+        title: Product
+        type: string
         minLength: 1
       description:
         title: Description
