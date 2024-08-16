@@ -36,7 +36,7 @@ class OrderViewSet(
             super(OrderViewSet, self)
             .get_queryset()
             .filter(
-                company__user=self.request.user,
+                company=self.request.user.company,
             )
         )
 
@@ -54,18 +54,28 @@ class OrderViewSet(
                 type=openapi.TYPE_STRING,
                 description="shipping_date",
             ),
+            openapi.Parameter(
+                "shipping_place",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="shipping_place",
+            ),
         ]
     )
     def list(self, request, *args, **kwargs):
         shipping_start_date = request.query_params.get("shipping_start_date")
         shipping_end_date = request.query_params.get("shipping_end_date")
-        print(f"shipping_date: {shipping_start_date} - {shipping_end_date}")
+        shipping_place = request.query_params.get("shipping_place")
+
+        queryset = self.queryset
+
         if shipping_start_date and shipping_end_date:
-            queryset = self.queryset.filter(
+            queryset = queryset.filter(
                 shipping_date__range=[shipping_start_date, shipping_end_date]
             )
-        else:
-            queryset = self.queryset
+
+        if shipping_place:
+            queryset = queryset.filter(shipping_place=shipping_place)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

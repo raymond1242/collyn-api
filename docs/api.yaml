@@ -65,6 +65,10 @@ paths:
         in: query
         description: shipping_date
         type: string
+      - name: shipping_place
+        in: query
+        description: shipping_place
+        type: string
       responses:
         '200':
           description: ''

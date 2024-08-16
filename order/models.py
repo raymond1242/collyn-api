@@ -3,19 +3,30 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class UserCompany(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+
+
 class Company(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=255)
     logo = models.ImageField(upload_to="company/logos", blank=True, null=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-
-class Location(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    name = models.CharField(max_length=255)
-    company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="locations"
+    users = models.ManyToManyField(
+        UserCompany, through="UserRole", help_text="Users in the company"
     )
+
+
+class UserRole(models.Model):
+    STORE = "STORE"
+    ADMIN = "ADMIN"
+    ROLE_CHOICES = (
+        (STORE, "Store"),
+        (ADMIN, "Admin"),
+    )
+    user = models.ForeignKey(UserCompany, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    role = models.CharField(max_length=255, choices=ROLE_CHOICES)
 
 
 class Order(models.Model):
@@ -37,6 +48,7 @@ class Order(models.Model):
     shipping_date = models.DateTimeField()
     has_production = models.BooleanField(default=False)
     delivered = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False)
 
     @staticmethod
     def generate_code(length=5):

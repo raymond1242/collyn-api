@@ -1,11 +1,5 @@
 from rest_framework import serializers
-from order.models import Order, Company, Location, OrderImage
-
-
-class LocationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Location
-        fields = "__all__"
+from order.models import Order, OrderImage
 
 
 class OrderImageSerializer(serializers.ModelSerializer):
