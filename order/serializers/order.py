@@ -16,10 +16,37 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class OrderUpdateDeliveredSerializer(serializers.ModelSerializer):
+class OrderUpdateCompletedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ["delivered"]
+        fields = ["completed"]
+
+
+class OrderUpdateStoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ["advance_payment", "pending_payment", "shipping_date"]
+        extra_kwargs = {field: {"required": False} for field in fields}
+
+
+class OrderUpdateAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = [
+            "name",
+            "product",
+            "description",
+            "price",
+            "advance_payment",
+            "pending_payment",
+            "registration_place",
+            "shipping_place",
+            "shipping_date",
+            "has_production",
+            "has_delivery",
+            "completed",
+        ]
+        extra_kwargs = {field: {"required": False} for field in fields}
 
 
 class OrderCreateSerializer(serializers.ModelSerializer):
@@ -42,6 +69,6 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             "shipping_place",
             "shipping_date",
             "has_production",
-            "delivered",
+            "has_delivery",
             "images",
         ]

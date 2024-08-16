@@ -35,7 +35,7 @@ paths:
       tags:
       - auth
     parameters: []
-  /company/{username}:
+  /company/{user}:
     get:
       operationId: company_read
       description: ''
@@ -44,11 +44,11 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/Company'
+            $ref: '#/definitions/UserCompany'
       tags:
       - company
     parameters:
-    - name: username
+    - name: user
       in: path
       required: true
       type: string
@@ -104,7 +104,7 @@ paths:
         in: body
         required: true
         schema:
-          $ref: '#/definitions/Order'
+          $ref: '#/definitions/OrderUpdateAdmin'
       responses:
         '200':
           description: ''
@@ -135,16 +135,16 @@ paths:
       required: true
       type: string
       format: uuid
-  /orders/{id}/update_delivered:
+  /orders/{id}/update_completed:
     put:
-      operationId: orders_update_delivered
+      operationId: orders_update_completed
       description: ''
       parameters:
       - name: data
         in: body
         required: true
         schema:
-          $ref: '#/definitions/OrderUpdateDelivered'
+          $ref: '#/definitions/OrderUpdateCompleted'
       responses:
         '200':
           description: ''
@@ -219,6 +219,25 @@ definitions:
         readOnly: true
         x-nullable: true
         format: uri
+  UserCompany:
+    required:
+    - name
+    - company
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      company:
+        $ref: '#/definitions/Company'
+      role:
+        title: Role
+        type: string
+        enum:
+        - STORE
+        - ADMIN
   OrderImage:
     type: object
     properties:
@@ -304,8 +323,8 @@ definitions:
       has_production:
         title: Has production
         type: boolean
-      delivered:
-        title: Delivered
+      has_delivery:
+        title: Has delivery
         type: boolean
       completed:
         title: Completed
@@ -368,8 +387,8 @@ definitions:
       has_production:
         title: Has production
         type: boolean
-      delivered:
-        title: Delivered
+      has_delivery:
+        title: Has delivery
         type: boolean
       images:
         type: array
@@ -377,9 +396,60 @@ definitions:
           type: string
           readOnly: true
           format: uri
-  OrderUpdateDelivered:
+  OrderUpdateAdmin:
     type: object
     properties:
-      delivered:
-        title: Delivered
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      product:
+        title: Product
+        type: string
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        minLength: 1
+      price:
+        title: Price
+        type: string
+        format: decimal
+      advance_payment:
+        title: Advance payment
+        type: string
+        format: decimal
+      pending_payment:
+        title: Pending payment
+        type: string
+        format: decimal
+      registration_place:
+        title: Registration place
+        type: string
+        maxLength: 100
+        minLength: 1
+      shipping_place:
+        title: Shipping place
+        type: string
+        maxLength: 100
+        minLength: 1
+      shipping_date:
+        title: Shipping date
+        type: string
+        format: date-time
+      has_production:
+        title: Has production
+        type: boolean
+      has_delivery:
+        title: Has delivery
+        type: boolean
+      completed:
+        title: Completed
+        type: boolean
+  OrderUpdateCompleted:
+    type: object
+    properties:
+      completed:
+        title: Completed
         type: boolean

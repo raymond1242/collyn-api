@@ -3,11 +3,13 @@ from uuid import uuid4
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 
-from order.models import Order, OrderImage
+from order.models import Order, OrderImage, UserCompany
 from order.serializers.order import (
     OrderSerializer,
     OrderCreateSerializer,
-    OrderUpdateDeliveredSerializer,
+    OrderUpdateCompletedSerializer,
+    OrderUpdateStoreSerializer,
+    OrderUpdateAdminSerializer,
 )
 
 from rest_framework.response import Response
@@ -34,12 +36,16 @@ class OrderViewSet(
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_user_company(self):
+        return self.request.user.user_company
+
     def get_queryset(self):
+        company = self.get_user_company().company
         return (
             super(OrderViewSet, self)
             .get_queryset()
             .filter(
-                company=self.request.user.company,
+                company=company,
             )
         )
 
@@ -88,11 +94,13 @@ class OrderViewSet(
         responses={status.HTTP_201_CREATED: OrderSerializer},
     )
     def create(self, request, *args, **kwargs):
+        user = self.get_user_company()
+        company = user.company
         serializer = OrderCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         images = serializer.validated_data.pop("images")
-        order = serializer.save(company=self.request.user.company)
+        order = serializer.save(company=company)
 
         for image in images:
             OrderImage.objects.create(order=order, image=image)
@@ -100,26 +108,35 @@ class OrderViewSet(
         return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(
-        request_body=OrderUpdateDeliveredSerializer,
+        request_body=OrderUpdateCompletedSerializer,
         responses={status.HTTP_200_OK: OrderSerializer},
     )
     @action(
-        methods=["PUT"], detail=True, serializer_class=OrderUpdateDeliveredSerializer
+        methods=["PUT"], detail=True, serializer_class=OrderUpdateCompletedSerializer
     )
-    def update_delivered(self, request, pk=None):
+    def update_completed(self, request, pk=None):
         order = self.get_object()
         serializer = self.get_serializer(order, data=request.data)
         serializer.is_valid(raise_exception=True)
-        order.delivered = serializer.validated_data["delivered"]
+        order.completed = serializer.validated_data["completed"]
         order.save()
         return Response(OrderSerializer(order).data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        request_body=OrderUpdateAdminSerializer,
+        responses={status.HTTP_200_OK: OrderSerializer},
+    )
     def update(self, request, *args, **kwargs):
         order = self.get_object()
-        user = self.request.user
-        serializer = self.get_serializer(order, data=request.data)
+        user = self.get_user_company()
+
+        if user.role == UserCompany.STORE:
+            serializer = OrderUpdateStoreSerializer(order, data=request.data)
+        elif user.role == UserCompany.ADMIN:
+            serializer = OrderUpdateAdminSerializer(order, data=request.data)
+        else:
+            raise Exception("Invalid role")
+
         serializer.is_valid(raise_exception=True)
-        order.name = serializer.validated_data["name"]
-        order.description = serializer.validated_data["description"]
-        order.save()
-        return Response(OrderSerializer(order).data, status=status.HTTP_200_OK)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)

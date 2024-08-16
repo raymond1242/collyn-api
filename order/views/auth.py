@@ -10,9 +10,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
 from order.serializers.auth import UserLoginSerializer, TokenSerializer
-from order.serializers.company import CompanySerializer
+from order.serializers.company import UserCompanySerializer
 
-from order.models import Company
+from order.models import UserCompany
 from django.contrib.auth.models import User
 
 
@@ -38,16 +38,16 @@ class AuthViewSet(viewsets.GenericViewSet):
 
 
 class UserCompanyViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    serializer_class = CompanySerializer
+    serializer_class = UserCompanySerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
-    lookup_field = "username"
+    lookup_field = "user"
 
     @swagger_auto_schema(
-        responses={status.HTTP_200_OK: CompanySerializer},
+        responses={status.HTTP_200_OK: UserCompanySerializer},
     )
     def retrieve(self, request, *args, **kwargs):
         user: User = request.user
-        company = Company.objects.get(user=user)
+        company = UserCompany.objects.get(user=user).company
         serializer = self.get_serializer(company)
         return Response(serializer.data)
