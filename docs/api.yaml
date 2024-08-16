@@ -267,6 +267,9 @@ definitions:
       delivered:
         title: Delivered
         type: boolean
+      completed:
+        title: Completed
+        type: boolean
       company:
         title: Company
         type: integer
