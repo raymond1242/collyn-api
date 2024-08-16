@@ -23,7 +23,10 @@ def generate_code(length=5):
 
 
 class OrderViewSet(
-    mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
 ):
     authentication_classes = [TokenAuthentication]
     queryset = Order.objects.all()
@@ -108,5 +111,15 @@ class OrderViewSet(
         serializer = self.get_serializer(order, data=request.data)
         serializer.is_valid(raise_exception=True)
         order.delivered = serializer.validated_data["delivered"]
+        order.save()
+        return Response(OrderSerializer(order).data, status=status.HTTP_200_OK)
+
+    def update(self, request, *args, **kwargs):
+        order = self.get_object()
+        user = self.request.user
+        serializer = self.get_serializer(order, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        order.name = serializer.validated_data["name"]
+        order.description = serializer.validated_data["description"]
         order.save()
         return Response(OrderSerializer(order).data, status=status.HTTP_200_OK)

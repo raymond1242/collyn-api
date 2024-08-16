@@ -95,6 +95,46 @@ paths:
       tags:
       - orders
     parameters: []
+  /orders/{id}:
+    put:
+      operationId: orders_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Order'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Order'
+      tags:
+      - orders
+    patch:
+      operationId: orders_partial_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Order'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Order'
+      tags:
+      - orders
+    parameters:
+    - name: id
+      in: path
+      description: A UUID string identifying this order.
+      required: true
+      type: string
+      format: uuid
   /orders/{id}/update_delivered:
     put:
       operationId: orders_update_delivered
@@ -280,7 +320,6 @@ definitions:
     - registration_place
     - shipping_place
     - shipping_date
-    - images
     type: object
     properties:
       name:
