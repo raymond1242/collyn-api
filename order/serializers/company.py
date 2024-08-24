@@ -7,8 +7,10 @@ class CompanySerializer(serializers.ModelSerializer):
         model = Company
         fields = ["name", "logo"]
 
+
 class UserCompanySerializer(serializers.ModelSerializer):
     company = CompanySerializer()
+
     class Meta:
         model = UserCompany
         fields = ["name", "company", "role"]

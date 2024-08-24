@@ -1,5 +1,5 @@
 from django.contrib import admin
-from order.models import Order, OrderImage, Company
+from order.models import Order, OrderImage, Company, UserCompany
 
 
 @admin.register(Order)
@@ -15,3 +15,8 @@ class OrderImage(admin.ModelAdmin):
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ["name"]
+
+
+@admin.register(UserCompany)
+class UserCompanyAdmin(admin.ModelAdmin):
+    list_display = ["name", "company", "role"]
