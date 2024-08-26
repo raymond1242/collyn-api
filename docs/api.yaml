@@ -35,6 +35,21 @@ paths:
       tags:
       - auth
     parameters: []
+  /company/stores:
+    get:
+      operationId: company_stores
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserCompanyStore'
+      tags:
+      - company
+    parameters: []
   /company/{user}:
     get:
       operationId: company_read
@@ -202,6 +217,16 @@ definitions:
         title: Key
         description: Token key
         type: string
+        minLength: 1
+  UserCompanyStore:
+    required:
+    - name
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 255
         minLength: 1
   Company:
     required:

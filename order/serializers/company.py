@@ -14,3 +14,9 @@ class UserCompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCompany
         fields = ["name", "company", "role"]
+
+
+class UserCompanyStoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserCompany
+        fields = ["name"]

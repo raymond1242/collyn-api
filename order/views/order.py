@@ -37,7 +37,8 @@ class OrderViewSet(
     permission_classes = [IsAuthenticated]
 
     def get_user_company(self):
-        return self.request.user.user_company
+        user_company = UserCompany.objects.get(user=self.request.user)
+        return user_company
 
     def get_queryset(self):
         company = self.get_user_company().company
