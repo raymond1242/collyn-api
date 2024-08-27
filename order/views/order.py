@@ -26,7 +26,6 @@ def generate_code(length=5):
 
 class OrderViewSet(
     mixins.CreateModelMixin,
-    # mixins.UpdateModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
@@ -77,7 +76,7 @@ class OrderViewSet(
         shipping_end_date = request.query_params.get("shipping_end_date")
         shipping_place = request.query_params.get("shipping_place")
 
-        queryset = self.queryset
+        queryset = self.get_queryset().filter(completed=False)
 
         if shipping_start_date and shipping_end_date:
             queryset = queryset.filter(
@@ -91,6 +90,48 @@ class OrderViewSet(
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "shipping_start_date",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="shipping_start_date",
+            ),
+            openapi.Parameter(
+                "shipping_end_date",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="shipping_date",
+            ),
+            openapi.Parameter(
+                "shipping_place",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="shipping_place",
+            ),
+        ],
+        responses={status.HTTP_200_OK: OrderSerializer(many=True)}
+    )
+    @action(methods=["GET"], detail=False, serializer_class=OrderSerializer)
+    def completed(self, request):
+        shipping_start_date = request.query_params.get("shipping_start_date")
+        shipping_end_date = request.query_params.get("shipping_end_date")
+        shipping_place = request.query_params.get("shipping_place")
+
+        orders = self.get_queryset().filter(completed=True)
+
+        if shipping_start_date and shipping_end_date:
+            orders = orders.filter(
+                shipping_date__range=[shipping_start_date, shipping_end_date]
+            )
+
+        if shipping_place:
+            orders = orders.filter(shipping_place=shipping_place)
+
+        serializer = self.get_serializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
         request_body=OrderCreateSerializer,
         responses={status.HTTP_201_CREATED: OrderSerializer},
     )
@@ -100,7 +141,7 @@ class OrderViewSet(
         serializer = OrderCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        images = serializer.validated_data.pop("images")
+        images = serializer.validated_data.pop("images", [])
         order = serializer.save(company=company)
 
         for image in images:

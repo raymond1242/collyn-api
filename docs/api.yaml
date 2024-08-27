@@ -110,6 +110,33 @@ paths:
       tags:
       - orders
     parameters: []
+  /orders/completed:
+    get:
+      operationId: orders_completed
+      description: ''
+      parameters:
+      - name: shipping_start_date
+        in: query
+        description: shipping_start_date
+        type: string
+      - name: shipping_end_date
+        in: query
+        description: shipping_date
+        type: string
+      - name: shipping_place
+        in: query
+        description: shipping_place
+        type: string
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Order'
+      tags:
+      - orders
+    parameters: []
   /orders/{id}/update_admin:
     put:
       operationId: orders_update_admin

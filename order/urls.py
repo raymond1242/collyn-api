@@ -1,6 +1,7 @@
 from rest_framework import routers
 from order.views.order import OrderViewSet
-from order.views.auth import AuthViewSet, UserCompanyViewSet
+from order.views.auth import AuthViewSet
+from order.views.user_company import UserCompanyViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
 
