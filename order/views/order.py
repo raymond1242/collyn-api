@@ -110,7 +110,7 @@ class OrderViewSet(
                 description="shipping_place",
             ),
         ],
-        responses={status.HTTP_200_OK: OrderSerializer(many=True)}
+        responses={status.HTTP_200_OK: OrderSerializer(many=True)},
     )
     @action(methods=["GET"], detail=False, serializer_class=OrderSerializer)
     def completed(self, request):
