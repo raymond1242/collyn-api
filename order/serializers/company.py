@@ -10,6 +10,7 @@ class CompanySerializer(serializers.ModelSerializer):
 
 class UserCompanySerializer(serializers.ModelSerializer):
     company = CompanySerializer()
+    role = serializers.ChoiceField(choices=UserCompany.ROLE_CHOICES, required=True)
 
     class Meta:
         model = UserCompany

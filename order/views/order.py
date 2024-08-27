@@ -26,7 +26,7 @@ def generate_code(length=5):
 
 class OrderViewSet(
     mixins.CreateModelMixin,
-    mixins.UpdateModelMixin,
+    # mixins.UpdateModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
@@ -124,20 +124,25 @@ class OrderViewSet(
         return Response(OrderSerializer(order).data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
+        request_body=OrderUpdateStoreSerializer,
+        responses={status.HTTP_200_OK: OrderSerializer},
+    )
+    @action(methods=["PUT"], detail=True, serializer_class=OrderUpdateStoreSerializer)
+    def update_store(self, request, pk=None):
+        order = self.get_object()
+        serializer = self.get_serializer(order, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        return Response(OrderSerializer(order).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
         request_body=OrderUpdateAdminSerializer,
         responses={status.HTTP_200_OK: OrderSerializer},
     )
-    def update(self, request, *args, **kwargs):
+    @action(methods=["PUT"], detail=True, serializer_class=OrderUpdateAdminSerializer)
+    def update_admin(self, request, pk=None):
         order = self.get_object()
-        user = self.get_user_company()
-
-        if user.role == UserCompany.STORE:
-            serializer = OrderUpdateStoreSerializer(order, data=request.data)
-        elif user.role == UserCompany.ADMIN:
-            serializer = OrderUpdateAdminSerializer(order, data=request.data)
-        else:
-            raise Exception("Invalid role")
-
+        serializer = self.get_serializer(order, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
