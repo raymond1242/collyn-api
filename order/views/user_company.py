@@ -11,7 +11,7 @@ from order.models import UserCompany
 from django.contrib.auth.models import User
 
 
-class UserCompanyViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class UserCompanyViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = UserCompanySerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
