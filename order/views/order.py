@@ -69,12 +69,29 @@ class OrderViewSet(
                 type=openapi.TYPE_STRING,
                 description="shipping_place",
             ),
+            openapi.Parameter(
+                "has_production",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_BOOLEAN,
+                description="has_production",
+            ),
+            openapi.Parameter(
+                "has_topper",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_BOOLEAN,
+                description="has_topper",
+            ),
         ]
     )
     def list(self, request, *args, **kwargs):
         shipping_start_date = request.query_params.get("shipping_start_date")
         shipping_end_date = request.query_params.get("shipping_end_date")
         shipping_place = request.query_params.get("shipping_place")
+        has_production = request.query_params.get("has_production")
+        has_topper = request.query_params.get("has_topper")
+
+        print(f"has_production: {has_production}")
+        print(f"has_topper: {has_topper}")
 
         queryset = self.get_queryset().filter(completed=False)
 
@@ -85,6 +102,12 @@ class OrderViewSet(
 
         if shipping_place:
             queryset = queryset.filter(shipping_place=shipping_place)
+
+        if has_production == "true":
+            queryset = queryset.filter(has_production=True)
+
+        if has_topper == "true":
+            queryset = queryset.filter(has_topper=True)
 
         queryset = queryset.order_by("shipping_date")
         serializer = self.get_serializer(queryset, many=True)
