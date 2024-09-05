@@ -86,6 +86,7 @@ class OrderViewSet(
         if shipping_place:
             queryset = queryset.filter(shipping_place=shipping_place)
 
+        queryset = queryset.order_by("shipping_date")
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -42,6 +42,7 @@ class Order(models.Model):
     shipping_place = models.CharField(max_length=100)
     shipping_date = models.DateTimeField()
     has_production = models.BooleanField(default=False)
+    has_topper = models.BooleanField(default=False)
     has_delivery = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
 
