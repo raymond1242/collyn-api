@@ -18,13 +18,18 @@ class UserLoginSerializer(serializers.Serializer):
         password = data.get("password")
 
         if username and password:
-            user = User.objects.get(username=username)
-            if user:
-                if user.check_password(password):
-                    return {"user": user}
-            raise serializers.ValidationError("Invalid username or password")
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                raise serializers.ValidationError("Usuario o contraseña incorrectos")
+
+            if user.check_password(password):
+                return {"user": user}
+            raise serializers.ValidationError("Usuario o contraseña incorrectos")
         else:
-            raise serializers.ValidationError("Missing username or password")
+            raise serializers.ValidationError(
+                "Falta el nombre de usuario o la contraseña"
+            )
 
 
 class TokenSerializer(serializers.Serializer):
