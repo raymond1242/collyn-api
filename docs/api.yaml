@@ -462,6 +462,9 @@ definitions:
       has_delivery:
         title: Has delivery
         type: boolean
+      has_topper:
+        title: Has topper
+        type: boolean
       images:
         type: array
         items:

@@ -4,7 +4,7 @@ from order.models import Order, OrderImage, Company, UserCompany
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    pass
+    list_display = ["name", "price", "advance_payment", "pending_payment", "registration_place", "shipping_place", "shipping_date", "completed"]
 
 
 @admin.register(OrderImage)

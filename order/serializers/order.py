@@ -70,5 +70,6 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             "shipping_date",
             "has_production",
             "has_delivery",
+            "has_topper",
             "images",
         ]
