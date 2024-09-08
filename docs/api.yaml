@@ -271,6 +271,11 @@ definitions:
         type: string
         maxLength: 255
         minLength: 1
+      address:
+        title: Address
+        type: string
+        maxLength: 255
+        x-nullable: true
   Company:
     required:
     - name

@@ -20,4 +20,4 @@ class UserCompanySerializer(serializers.ModelSerializer):
 class UserCompanyStoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCompany
-        fields = ["name"]
+        fields = ["name", "address"]

@@ -21,6 +21,7 @@ class UserCompany(models.Model):
     company = models.ForeignKey(
         Company, on_delete=models.CASCADE, related_name="users", null=True
     )
+    address = models.CharField(max_length=255, null=True, blank=True)
     role = models.CharField(max_length=255, choices=ROLE_CHOICES, default=STORE)
 
 
