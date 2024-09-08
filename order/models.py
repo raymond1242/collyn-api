@@ -1,3 +1,5 @@
+import string
+import random
 from uuid import uuid4
 from django.db import models
 from django.contrib.auth.models import User
@@ -46,10 +48,12 @@ class Order(models.Model):
     has_topper = models.BooleanField(default=False)
     has_delivery = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
+    code = models.CharField(max_length=255, blank=True, unique=True)
 
     @staticmethod
-    def generate_code(length=5):
-        return uuid4().hex[:length].upper()
+    def generate_unique_code(length=5):
+        characters = string.ascii_uppercase + string.digits
+        return "".join(random.choices(characters, k=length))
 
 
 class OrderImage(models.Model):

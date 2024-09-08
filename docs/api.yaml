@@ -406,6 +406,10 @@ definitions:
       completed:
         title: Completed
         type: boolean
+      code:
+        title: Code
+        type: string
+        maxLength: 255
       company:
         title: Company
         type: integer

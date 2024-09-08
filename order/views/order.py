@@ -20,10 +20,6 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 
-def generate_code(length=5):
-    return uuid4().hex[:length].upper()
-
-
 class OrderViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
@@ -89,9 +85,6 @@ class OrderViewSet(
         shipping_place = request.query_params.get("shipping_place")
         has_production = request.query_params.get("has_production")
         has_topper = request.query_params.get("has_topper")
-
-        print(f"has_production: {has_production}")
-        print(f"has_topper: {has_topper}")
 
         queryset = self.get_queryset().filter(completed=False)
 
@@ -166,7 +159,12 @@ class OrderViewSet(
         serializer.is_valid(raise_exception=True)
 
         images = serializer.validated_data.pop("images", [])
-        order = serializer.save(company=company)
+
+        code = Order.generate_unique_code()
+        while Order.objects.filter(code=code).exists():
+            code = Order.generate_unique_code()
+
+        order = serializer.save(company=company, code=code)
 
         for image in images:
             OrderImage.objects.create(order=order, image=image)

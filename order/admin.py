@@ -9,7 +9,7 @@ class OrderAdmin(admin.ModelAdmin):
         "price",
         "advance_payment",
         "pending_payment",
-        "registration_place",
+        "code",
         "shipping_place",
         "shipping_date",
         "completed",
