@@ -27,7 +27,6 @@ class OrderViewSet(
 ):
     authentication_classes = [TokenAuthentication]
     queryset = Order.objects.all()
-
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 

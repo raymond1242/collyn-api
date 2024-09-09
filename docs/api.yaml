@@ -67,6 +67,39 @@ paths:
       in: path
       required: true
       type: string
+  /order/images:
+    post:
+      operationId: order_images_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/OrderImageCreate'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/OrderImage'
+      tags:
+      - order
+    parameters: []
+  /order/images/{id}:
+    delete:
+      operationId: order_images_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - order
+    parameters:
+    - name: id
+      in: path
+      required: true
+      type: string
   /orders:
     get:
       operationId: orders_list
@@ -312,6 +345,21 @@ definitions:
         enum:
         - STORE
         - ADMIN
+  OrderImageCreate:
+    required:
+    - order
+    type: object
+    properties:
+      image:
+        title: Image
+        type: string
+        readOnly: true
+        x-nullable: true
+        format: uri
+      order:
+        title: Order
+        type: string
+        format: uuid
   OrderImage:
     required:
     - order
