@@ -5,7 +5,7 @@ from order.models import Order, OrderImage
 class OrderImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderImage
-        fields = ["image"]
+        fields = ["id", "image", "order"]
 
 
 class OrderSerializer(serializers.ModelSerializer):

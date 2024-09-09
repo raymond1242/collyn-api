@@ -313,14 +313,25 @@ definitions:
         - STORE
         - ADMIN
   OrderImage:
+    required:
+    - order
     type: object
     properties:
+      id:
+        title: Id
+        type: string
+        format: uuid
+        readOnly: true
       image:
         title: Image
         type: string
         readOnly: true
         x-nullable: true
         format: uri
+      order:
+        title: Order
+        type: string
+        format: uuid
   Order:
     required:
     - name
