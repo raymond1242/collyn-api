@@ -98,13 +98,19 @@ paths:
     parameters:
     - name: id
       in: path
+      description: A UUID string identifying this order image.
       required: true
       type: string
+      format: uuid
   /orders:
     get:
       operationId: orders_list
       description: ''
       parameters:
+      - name: code
+        in: query
+        description: code
+        type: string
       - name: shipping_start_date
         in: query
         description: shipping_start_date

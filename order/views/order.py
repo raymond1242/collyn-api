@@ -47,6 +47,12 @@ class OrderViewSet(
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
+                "code",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="code",
+            ),
+            openapi.Parameter(
                 "shipping_start_date",
                 openapi.IN_QUERY,
                 type=openapi.TYPE_STRING,
@@ -84,13 +90,17 @@ class OrderViewSet(
         shipping_place = request.query_params.get("shipping_place")
         has_production = request.query_params.get("has_production")
         has_topper = request.query_params.get("has_topper")
-
+        code = request.query_params.get("code")
+        
         queryset = self.get_queryset().filter(completed=False)
 
         if shipping_start_date and shipping_end_date:
             queryset = queryset.filter(
                 shipping_date__range=[shipping_start_date, shipping_end_date]
             )
+
+        if code:
+            queryset = queryset.filter(code__icontains=code)
 
         if shipping_place:
             queryset = queryset.filter(shipping_place=shipping_place)
