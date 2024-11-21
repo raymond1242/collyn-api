@@ -475,6 +475,10 @@ definitions:
         title: Code
         type: string
         maxLength: 255
+      phone_number:
+        title: Phone number
+        type: string
+        maxLength: 12
       company:
         title: Company
         type: integer
@@ -545,6 +549,10 @@ definitions:
           type: string
           readOnly: true
           format: uri
+      phone_number:
+        title: Phone number
+        type: string
+        maxLength: 12
   OrderUpdateAdmin:
     type: object
     properties:

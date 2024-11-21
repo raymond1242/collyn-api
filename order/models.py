@@ -49,6 +49,7 @@ class Order(models.Model):
     has_delivery = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
     code = models.CharField(max_length=255, blank=True, unique=True)
+    phone_number = models.CharField(max_length=12, blank=True, default="")
 
     @staticmethod
     def generate_unique_code(length=5):

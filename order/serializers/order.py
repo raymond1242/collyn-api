@@ -67,4 +67,5 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             "has_delivery",
             "has_topper",
             "images",
+            "phone_number",
         ]
