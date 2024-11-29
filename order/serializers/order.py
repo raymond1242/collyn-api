@@ -38,6 +38,7 @@ class OrderUpdateAdminSerializer(serializers.ModelSerializer):
             "shipping_place",
             "shipping_date",
             "has_production",
+            "has_topper",
             "has_delivery",
             "completed",
         ]

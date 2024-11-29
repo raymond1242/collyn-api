@@ -598,6 +598,9 @@ definitions:
       has_production:
         title: Has production
         type: boolean
+      has_topper:
+        title: Has topper
+        type: boolean
       has_delivery:
         title: Has delivery
         type: boolean
