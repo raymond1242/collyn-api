@@ -591,6 +591,10 @@ definitions:
         type: string
         maxLength: 100
         minLength: 1
+      phone_number:
+        title: Phone number
+        type: string
+        maxLength: 12
       shipping_date:
         title: Shipping date
         type: string

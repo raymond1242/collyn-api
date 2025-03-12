@@ -36,6 +36,7 @@ class OrderUpdateAdminSerializer(serializers.ModelSerializer):
             "pending_payment",
             "registration_place",
             "shipping_place",
+            "phone_number",
             "shipping_date",
             "has_production",
             "has_topper",
