@@ -51,6 +51,7 @@ EXTERNAL_APPS = [
 
 CUSTOM_APPS = [
     "order",
+    "warehouse",
 ]
 
 INSTALLED_APPS = [
