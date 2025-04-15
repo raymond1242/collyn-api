@@ -274,6 +274,69 @@ paths:
       tags:
       - warehouse
     parameters: []
+  /warehouse/product:
+    get:
+      operationId: warehouse_product_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductDetail'
+      tags:
+      - warehouse
+    parameters: []
+  /warehouse/product/{id}:
+    put:
+      operationId: warehouse_product_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/ProductDetail'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/ProductDetail'
+      tags:
+      - warehouse
+    patch:
+      operationId: warehouse_product_partial_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/ProductDetail'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/ProductDetail'
+      tags:
+      - warehouse
+    delete:
+      operationId: warehouse_product_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - warehouse
+    parameters:
+    - name: id
+      in: path
+      description: A unique integer value identifying this product.
+      required: true
+      type: integer
   /warehouse/user_warehouse/{user}:
     get:
       operationId: warehouse_user_warehouse_read
@@ -722,6 +785,52 @@ definitions:
         minLength: 1
       user:
         $ref: '#/definitions/UserDetail'
+  ProductDetail:
+    required:
+    - name
+    - description
+    - category
+    - min_stock
+    - stock
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        minLength: 1
+      category:
+        title: Category
+        type: string
+        enum:
+        - CLEANING
+        - DISPOSABLE
+        - SUPPLIES
+        - SAUSAGES
+      min_stock:
+        title: Min stock
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      stock:
+        title: Stock
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      image:
+        title: Image
+        type: string
+        readOnly: true
+        x-nullable: true
+        format: uri
   UserWarehouse:
     required:
     - user
