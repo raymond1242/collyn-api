@@ -33,23 +33,6 @@ class UserWarehouseLoginSerializer(serializers.Serializer):
             )
 
 
-class UserWarehouseSerializer(serializers.ModelSerializer):
-    user = UserDetailSerializer(required=True, help_text="User object")
-    role = serializers.CharField(required=True, help_text="Role of the user")
-    company = CompanySerializer()
-
-    class Meta:
-        model = UserWarehouse
-        fields = ["user", "role", "company"]
-
-
 class WarehouseTokenSerializer(serializers.Serializer):
     key = serializers.CharField(required=True)
-    user = serializers.SerializerMethodField()
-
-    def get_user(self, token):
-        try:
-            user_warehouse = UserWarehouse.objects.get(user=token.user)
-            return UserWarehouseSerializer(user_warehouse).data
-        except UserWarehouse.DoesNotExist:
-            return None
+    user = UserDetailSerializer(required=True, help_text="User object")

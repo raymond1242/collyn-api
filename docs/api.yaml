@@ -683,19 +683,6 @@ definitions:
         type: string
         maxLength: 255
         minLength: 1
-  WarehouseToken:
-    required:
-    - key
-    type: object
-    properties:
-      key:
-        title: Key
-        type: string
-        minLength: 1
-      user:
-        title: User
-        type: string
-        readOnly: true
   UserDetail:
     description: User object
     required:
@@ -723,6 +710,18 @@ definitions:
         title: Last name
         type: string
         maxLength: 150
+  WarehouseToken:
+    required:
+    - key
+    - user
+    type: object
+    properties:
+      key:
+        title: Key
+        type: string
+        minLength: 1
+      user:
+        $ref: '#/definitions/UserDetail'
   UserWarehouse:
     required:
     - user
