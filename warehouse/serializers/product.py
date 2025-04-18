@@ -20,3 +20,21 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "stock": {"required": True},
             "category": {"required": True},
         }
+
+class ProductCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = [
+            "name",
+            "description",
+            "category",
+            "min_stock",
+            "stock",
+            "image",
+        ]
+        
+        extra_kwargs = {
+            "min_stock": {"required": True},
+            "stock": {"required": True},
+            "category": {"required": True},
+        }

@@ -288,6 +288,22 @@ paths:
               $ref: '#/definitions/ProductDetail'
       tags:
       - warehouse
+    post:
+      operationId: warehouse_product_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/ProductCreate'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/ProductDetail'
+      tags:
+      - warehouse
     parameters: []
   /warehouse/product/{id}:
     put:
@@ -798,6 +814,48 @@ definitions:
         title: ID
         type: integer
         readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        minLength: 1
+      category:
+        title: Category
+        type: string
+        enum:
+        - CLEANING
+        - DISPOSABLE
+        - SUPPLIES
+        - SAUSAGES
+      min_stock:
+        title: Min stock
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      stock:
+        title: Stock
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      image:
+        title: Image
+        type: string
+        readOnly: true
+        x-nullable: true
+        format: uri
+  ProductCreate:
+    required:
+    - name
+    - description
+    - category
+    - min_stock
+    - stock
+    type: object
+    properties:
       name:
         title: Name
         type: string
