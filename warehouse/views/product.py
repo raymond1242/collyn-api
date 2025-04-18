@@ -5,7 +5,10 @@ from rest_framework.authentication import TokenAuthentication
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from warehouse.models import UserWarehouse, Product
-from warehouse.serializers.product import ProductDetailSerializer, ProductCreateSerializer
+from warehouse.serializers.product import (
+    ProductDetailSerializer,
+    ProductCreateSerializer,
+)
 
 
 class ProductViewset(
@@ -49,4 +52,8 @@ class ProductViewset(
         serializer.is_valid(raise_exception=True)
         product = serializer.save(company=self.get_user_company().company)
         headers = self.get_success_headers(serializer.data)
-        return Response(ProductDetailSerializer(product).data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            ProductDetailSerializer(product).data,
+            status=status.HTTP_201_CREATED,
+            headers=headers,
+        )

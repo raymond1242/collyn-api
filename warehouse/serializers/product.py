@@ -21,6 +21,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "category": {"required": True},
         }
 
+
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -32,7 +33,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             "stock",
             "image",
         ]
-        
+
         extra_kwargs = {
             "min_stock": {"required": True},
             "stock": {"required": True},
