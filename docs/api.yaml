@@ -353,6 +353,27 @@ paths:
       description: A unique integer value identifying this product.
       required: true
       type: integer
+  /warehouse/ticket:
+    get:
+      operationId: warehouse_ticket_list
+      description: ''
+      parameters:
+      - name: type
+        in: query
+        description: Type of ticket
+        required: true
+        type: string
+        default: MOVEMENT
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Ticket'
+      tags:
+      - warehouse
+    parameters: []
   /warehouse/user_warehouse/{user}:
     get:
       operationId: warehouse_user_warehouse_read
@@ -889,6 +910,39 @@ definitions:
         readOnly: true
         x-nullable: true
         format: uri
+  Ticket:
+    required:
+    - type
+    - user
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      type:
+        title: Type
+        type: string
+        enum:
+        - ENTRY
+        - MOVEMENT
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      updated_at:
+        title: Updated at
+        type: string
+        format: date-time
+        readOnly: true
+      location:
+        title: Location
+        type: integer
+        x-nullable: true
+      user:
+        title: User
+        type: integer
   UserWarehouse:
     required:
     - user

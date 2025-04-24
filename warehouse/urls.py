@@ -2,6 +2,7 @@ from rest_framework import routers
 from warehouse.views.auth import AuthViewSet
 from warehouse.views.user_warehouse import UserWarehouseViewSet
 from warehouse.views.product import ProductViewset
+from warehouse.views.ticket import TicketViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
 
@@ -12,5 +13,7 @@ router.register(
 )
 
 router.register(prefix=r"product", viewset=ProductViewset, basename="product")
+
+router.register(prefix=r"ticket", viewset=TicketViewSet, basename="ticket")
 
 urlpatterns = router.urls
