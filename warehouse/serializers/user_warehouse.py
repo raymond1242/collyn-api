@@ -12,3 +12,12 @@ class UserWarehouseSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserWarehouse
         fields = ["user", "role", "company"]
+
+
+class UserWarehouseTicketSerializer(serializers.ModelSerializer):
+    user = UserDetailSerializer(required=True, help_text="User object")
+    role = serializers.CharField(required=True, help_text="Role of the user")
+
+    class Meta:
+        model = UserWarehouse
+        fields = ["user", "role"]

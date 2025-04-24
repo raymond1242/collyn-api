@@ -910,16 +910,89 @@ definitions:
         readOnly: true
         x-nullable: true
         format: uri
-  Ticket:
+  StockMovement:
     required:
-    - type
-    - user
+    - ticket
+    - product
     type: object
     properties:
       id:
         title: ID
         type: integer
         readOnly: true
+      quantity:
+        title: Quantity
+        type: integer
+        maximum: 2147483647
+        minimum: 0
+      status:
+        title: Status
+        type: string
+        enum:
+        - NOT_EDITED
+        - EDITED
+        - DELETED
+      updated_at:
+        title: Updated at
+        type: string
+        format: date-time
+        readOnly: true
+      ticket:
+        title: Ticket
+        type: integer
+      product:
+        title: Product
+        type: integer
+  Location:
+    required:
+    - name
+    - company
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      company:
+        title: Company
+        type: integer
+  UserWarehouseTicket:
+    required:
+    - user
+    - role
+    type: object
+    properties:
+      user:
+        $ref: '#/definitions/UserDetail'
+      role:
+        title: Role
+        description: Role of the user
+        type: string
+        minLength: 1
+  Ticket:
+    required:
+    - type
+    - company
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      movements:
+        type: array
+        items:
+          $ref: '#/definitions/StockMovement'
+        readOnly: true
+      location:
+        $ref: '#/definitions/Location'
+      user:
+        $ref: '#/definitions/UserWarehouseTicket'
       type:
         title: Type
         type: string
@@ -936,12 +1009,8 @@ definitions:
         type: string
         format: date-time
         readOnly: true
-      location:
-        title: Location
-        type: integer
-        x-nullable: true
-      user:
-        title: User
+      company:
+        title: Company
         type: integer
   UserWarehouse:
     required:
