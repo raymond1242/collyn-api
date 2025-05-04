@@ -2,11 +2,14 @@ from rest_framework import mixins, viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
+from rest_framework.decorators import action
+
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from warehouse.models import UserWarehouse, Product
 from warehouse.serializers.product import (
     ProductDetailSerializer,
+    ProductStockSerializer,
     ProductCreateSerializer,
 )
 
@@ -38,6 +41,15 @@ class ProductViewset(
         )
 
     def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        responses={status.HTTP_200_OK: ProductStockSerializer(many=True)},
+    )
+    @action(methods=["GET"], detail=False, serializer_class=ProductStockSerializer)
+    def stock(self, request, pk=None):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

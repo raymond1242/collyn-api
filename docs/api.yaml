@@ -305,6 +305,21 @@ paths:
       tags:
       - warehouse
     parameters: []
+  /warehouse/product/stock:
+    get:
+      operationId: warehouse_product_stock
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductStock'
+      tags:
+      - warehouse
+    parameters: []
   /warehouse/product/{id}:
     put:
       operationId: warehouse_product_update
@@ -363,7 +378,7 @@ paths:
         description: Type of ticket
         required: true
         type: string
-        default: MOVEMENT
+        default: ENTRY
       responses:
         '200':
           description: ''
@@ -374,6 +389,24 @@ paths:
       tags:
       - warehouse
     parameters: []
+  /warehouse/ticket/{id}:
+    get:
+      operationId: warehouse_ticket_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/TicketDetail'
+      tags:
+      - warehouse
+    parameters:
+    - name: id
+      in: path
+      description: A unique integer value identifying this ticket.
+      required: true
+      type: integer
   /warehouse/user_warehouse/{user}:
     get:
       operationId: warehouse_user_warehouse_read
@@ -910,39 +943,33 @@ definitions:
         readOnly: true
         x-nullable: true
         format: uri
-  StockMovement:
+  ProductStock:
     required:
-    - ticket
-    - product
+    - name
     type: object
     properties:
       id:
         title: ID
         type: integer
         readOnly: true
-      quantity:
-        title: Quantity
-        type: integer
-        maximum: 2147483647
-        minimum: 0
-      status:
-        title: Status
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      category:
+        title: Category
         type: string
         enum:
-        - NOT_EDITED
-        - EDITED
-        - DELETED
-      updated_at:
-        title: Updated at
-        type: string
-        format: date-time
-        readOnly: true
-      ticket:
-        title: Ticket
+        - CLEANING
+        - DISPOSABLE
+        - SUPPLIES
+        - SAUSAGES
+      stock:
+        title: Stock
         type: integer
-      product:
-        title: Product
-        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
   Location:
     required:
     - name
@@ -975,6 +1002,63 @@ definitions:
         type: string
         minLength: 1
   Ticket:
+    required:
+    - type
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      location:
+        $ref: '#/definitions/Location'
+      user:
+        $ref: '#/definitions/UserWarehouseTicket'
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      type:
+        title: Type
+        type: string
+        enum:
+        - ENTRY
+        - MOVEMENT
+  StockMovement:
+    required:
+    - quantity
+    - status
+    - ticket
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      product:
+        $ref: '#/definitions/ProductStock'
+      quantity:
+        title: Quantity
+        type: integer
+        maximum: 2147483647
+        minimum: 0
+      status:
+        title: Status
+        type: string
+        enum:
+        - NOT_EDITED
+        - EDITED
+        - DELETED
+      updated_at:
+        title: Updated at
+        type: string
+        format: date-time
+        readOnly: true
+      ticket:
+        title: Ticket
+        type: integer
+  TicketDetail:
     required:
     - type
     - company
