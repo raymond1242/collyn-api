@@ -14,3 +14,15 @@ class StockMovementSerializer(serializers.ModelSerializer):
             "quantity": {"required": True},
             "status": {"required": True},
         }
+
+
+class StockMovementCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StockMovement
+        fields = [
+            "product",
+            "quantity",
+        ]
+        extra_kwargs = {
+            "quantity": {"required": True},
+        }

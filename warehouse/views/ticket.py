@@ -4,14 +4,23 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-from warehouse.models import Ticket, UserWarehouse
-from warehouse.serializers.ticket import TicketSerializer, TicketDetailSerializer
+from warehouse.models import Ticket, UserWarehouse, StockMovement
+from warehouse.serializers.ticket import (
+    TicketSerializer,
+    TicketDetailSerializer,
+    TicketCreateSerializer,
+)
 
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 
-class TicketViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+class TicketViewSet(
+    viewsets.GenericViewSet,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+):
     permission_classes = [IsAuthenticated]
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
@@ -58,3 +67,41 @@ class TicketViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retri
         ticket = self.get_object()
         serializer = TicketDetailSerializer(ticket)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        request_body=TicketCreateSerializer,
+        responses={status.HTTP_201_CREATED: TicketDetailSerializer},
+    )
+    def create(self, request, *args, **kwargs):
+        user = self.get_user_company()
+        company = user.company
+
+        serializer = TicketCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        movements = serializer.validated_data.pop("movements", [])
+        if not movements:
+            return Response(
+                {"movements": ["El ticket debe contener al menos un movimiento."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        ticket = serializer.save(company=company, user=user)
+
+        for movement in movements:
+            movement = StockMovement.objects.create(
+                ticket=ticket, status=StockMovement.NOT_EDITED, **movement
+            )
+            if ticket.type == Ticket.ENTRY:
+                movement.product.stock += movement.quantity
+                movement.product.save()
+            elif ticket.type == Ticket.MOVEMENT:
+                if movement.product.stock - movement.quantity < 0:
+                    movement.status = StockMovement.DELETED
+                    movement.save()
+                else:
+                    movement.product.stock -= movement.quantity
+                    movement.product.save()
+
+        serializer = TicketDetailSerializer(ticket)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

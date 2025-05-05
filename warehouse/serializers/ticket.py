@@ -1,7 +1,10 @@
 from rest_framework import serializers
 from warehouse.models import Ticket
 from warehouse.serializers.location import LocationSerializer
-from warehouse.serializers.stock_movement import StockMovementSerializer
+from warehouse.serializers.stock_movement import (
+    StockMovementSerializer,
+    StockMovementCreateSerializer,
+)
 from warehouse.serializers.user_warehouse import UserWarehouseTicketSerializer
 
 
@@ -36,3 +39,22 @@ class TicketDetailSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "type": {"required": True},
         }
+
+
+class TicketCreateSerializer(serializers.ModelSerializer):
+    movements = StockMovementCreateSerializer(many=True)
+
+    class Meta:
+        model = Ticket
+        fields = [
+            "type",
+            "location",
+            "movements",
+        ]
+
+    def validate(self, data):
+        if data.get("type") == Ticket.MOVEMENT and not data.get("location"):
+            raise serializers.ValidationError(
+                {"location": "Localidad es obligatoria para movimientos"}
+            )
+        return data

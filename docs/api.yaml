@@ -274,6 +274,21 @@ paths:
       tags:
       - warehouse
     parameters: []
+  /warehouse/location:
+    get:
+      operationId: warehouse_location_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Location'
+      tags:
+      - warehouse
+    parameters: []
   /warehouse/product:
     get:
       operationId: warehouse_product_list
@@ -386,6 +401,22 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Ticket'
+      tags:
+      - warehouse
+    post:
+      operationId: warehouse_ticket_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/TicketCreate'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/TicketDetail'
       tags:
       - warehouse
     parameters: []
@@ -855,6 +886,20 @@ definitions:
         minLength: 1
       user:
         $ref: '#/definitions/UserDetail'
+  Location:
+    required:
+    - name
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
   ProductDetail:
     required:
     - name
@@ -970,24 +1015,6 @@ definitions:
         type: integer
         maximum: 2147483647
         minimum: -2147483648
-  Location:
-    required:
-    - name
-    - company
-    type: object
-    properties:
-      id:
-        title: ID
-        type: integer
-        readOnly: true
-      name:
-        title: Name
-        type: string
-        maxLength: 255
-        minLength: 1
-      company:
-        title: Company
-        type: integer
   UserWarehouseTicket:
     required:
     - user
@@ -1025,6 +1052,39 @@ definitions:
         enum:
         - ENTRY
         - MOVEMENT
+  StockMovementCreate:
+    required:
+    - product
+    - quantity
+    type: object
+    properties:
+      product:
+        title: Product
+        type: integer
+      quantity:
+        title: Quantity
+        type: integer
+        maximum: 2147483647
+        minimum: 0
+  TicketCreate:
+    required:
+    - movements
+    type: object
+    properties:
+      type:
+        title: Type
+        type: string
+        enum:
+        - ENTRY
+        - MOVEMENT
+      location:
+        title: Location
+        type: integer
+        x-nullable: true
+      movements:
+        type: array
+        items:
+          $ref: '#/definitions/StockMovementCreate'
   StockMovement:
     required:
     - quantity
