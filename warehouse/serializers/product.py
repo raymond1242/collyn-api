@@ -26,6 +26,11 @@ class ProductStockSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ["id", "name", "category", "stock"]
+        extra_kwargs = {
+            "category": {"required": True},
+            "stock": {"required": True},
+            "name": {"required": True},
+        }
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):

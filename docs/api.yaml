@@ -991,6 +991,8 @@ definitions:
   ProductStock:
     required:
     - name
+    - category
+    - stock
     type: object
     properties:
       id:
