@@ -383,6 +383,45 @@ paths:
       description: A unique integer value identifying this product.
       required: true
       type: integer
+  /warehouse/stock_movement/{id}:
+    put:
+      operationId: warehouse_stock_movement_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/StockeMovementUpdate'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/StockMovement'
+      tags:
+      - warehouse
+    patch:
+      operationId: warehouse_stock_movement_partial_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/StockMovement'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/StockMovement'
+      tags:
+      - warehouse
+    parameters:
+    - name: id
+      in: path
+      description: A unique integer value identifying this stock movement.
+      required: true
+      type: integer
   /warehouse/ticket:
     get:
       operationId: warehouse_ticket_list
@@ -1027,6 +1066,49 @@ definitions:
         type: integer
         maximum: 2147483647
         minimum: -2147483648
+  StockeMovementUpdate:
+    required:
+    - quantity
+    type: object
+    properties:
+      quantity:
+        title: Quantity
+        type: integer
+        maximum: 2147483647
+        minimum: 0
+  StockMovement:
+    required:
+    - quantity
+    - status
+    - ticket
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      product:
+        $ref: '#/definitions/ProductStock'
+      quantity:
+        title: Quantity
+        type: integer
+        maximum: 2147483647
+        minimum: 0
+      status:
+        title: Status
+        type: string
+        enum:
+        - NOT_EDITED
+        - EDITED
+        - DELETED
+      updated_at:
+        title: Updated at
+        type: string
+        format: date-time
+        readOnly: true
+      ticket:
+        title: Ticket
+        type: integer
   UserWarehouseTicket:
     required:
     - user
@@ -1097,39 +1179,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/StockMovementCreate'
-  StockMovement:
-    required:
-    - quantity
-    - status
-    - ticket
-    type: object
-    properties:
-      id:
-        title: ID
-        type: integer
-        readOnly: true
-      product:
-        $ref: '#/definitions/ProductStock'
-      quantity:
-        title: Quantity
-        type: integer
-        maximum: 2147483647
-        minimum: 0
-      status:
-        title: Status
-        type: string
-        enum:
-        - NOT_EDITED
-        - EDITED
-        - DELETED
-      updated_at:
-        title: Updated at
-        type: string
-        format: date-time
-        readOnly: true
-      ticket:
-        title: Ticket
-        type: integer
   TicketDetail:
     required:
     - type
