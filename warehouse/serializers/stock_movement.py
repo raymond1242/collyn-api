@@ -62,3 +62,24 @@ class StockeMovementUpdateSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+    def perform_destroy(self):
+        instance = self.instance
+        product = instance.product
+        quantity = instance.quantity
+
+        # Update stock
+        if instance.ticket.type == "ENTRY":
+            product.stock -= quantity
+        elif instance.ticket.type == "MOVEMENT":
+            product.stock += quantity
+        else:
+            return instance
+
+        if product.stock < 0:
+            return instance
+        product.save()
+
+        # Save movement
+        instance.status = StockMovement.DELETED
+        instance.save()

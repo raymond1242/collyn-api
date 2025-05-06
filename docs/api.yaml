@@ -416,6 +416,15 @@ paths:
             $ref: '#/definitions/StockMovement'
       tags:
       - warehouse
+    delete:
+      operationId: warehouse_stock_movement_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - warehouse
     parameters:
     - name: id
       in: path

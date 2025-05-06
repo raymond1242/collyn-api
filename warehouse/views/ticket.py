@@ -73,9 +73,7 @@ class TicketViewSet(
         end_date = request.query_params.get("end_date")
 
         if start_date and end_date:
-            queryset = queryset.filter(
-                created_at__range=[start_date, end_date]
-            )
+            queryset = queryset.filter(created_at__range=[start_date, end_date])
 
         queryset = queryset.filter(type=type)
         serializer = self.get_serializer(queryset, many=True)
