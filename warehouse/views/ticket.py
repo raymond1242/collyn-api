@@ -50,11 +50,33 @@ class TicketViewSet(
                 required=True,
                 default=Ticket.ENTRY,
             ),
+            openapi.Parameter(
+                "start_date",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="start_date",
+                required=False,
+            ),
+            openapi.Parameter(
+                "end_date",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="end_date",
+                required=False,
+            ),
         ]
     )
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         type = request.query_params.get("type", Ticket.ENTRY)
+        start_date = request.query_params.get("start_date")
+        end_date = request.query_params.get("end_date")
+
+        if start_date and end_date:
+            queryset = queryset.filter(
+                created_at__range=[start_date, end_date]
+            )
+
         queryset = queryset.filter(type=type)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

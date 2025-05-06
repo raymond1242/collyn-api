@@ -394,6 +394,16 @@ paths:
         required: true
         type: string
         default: ENTRY
+      - name: start_date
+        in: query
+        description: start_date
+        required: false
+        type: string
+      - name: end_date
+        in: query
+        description: end_date
+        required: false
+        type: string
       responses:
         '200':
           description: ''
