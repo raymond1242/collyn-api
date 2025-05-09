@@ -1179,16 +1179,16 @@ definitions:
   UserWarehouseTicket:
     required:
     - user
-    - role
     type: object
     properties:
       user:
         $ref: '#/definitions/UserDetail'
       role:
         title: Role
-        description: Role of the user
         type: string
-        minLength: 1
+        enum:
+        - ADMIN
+        - STOCK_MANAGER
   Ticket:
     required:
     - type
@@ -1287,7 +1287,6 @@ definitions:
   UserWarehouse:
     required:
     - user
-    - role
     - company
     type: object
     properties:
@@ -1295,8 +1294,9 @@ definitions:
         $ref: '#/definitions/UserDetail'
       role:
         title: Role
-        description: Role of the user
         type: string
-        minLength: 1
+        enum:
+        - ADMIN
+        - STOCK_MANAGER
       company:
         $ref: '#/definitions/Company'

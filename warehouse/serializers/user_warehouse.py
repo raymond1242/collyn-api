@@ -6,7 +6,6 @@ from warehouse.serializers.auth import UserDetailSerializer
 
 class UserWarehouseSerializer(serializers.ModelSerializer):
     user = UserDetailSerializer(required=True, help_text="User object")
-    role = serializers.CharField(required=True, help_text="Role of the user")
     company = CompanySerializer()
 
     class Meta:
@@ -16,7 +15,6 @@ class UserWarehouseSerializer(serializers.ModelSerializer):
 
 class UserWarehouseTicketSerializer(serializers.ModelSerializer):
     user = UserDetailSerializer(required=True, help_text="User object")
-    role = serializers.CharField(required=True, help_text="Role of the user")
 
     class Meta:
         model = UserWarehouse
