@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 from warehouse.models import StockMovement
 from warehouse.serializers.product import ProductStockSerializer
@@ -42,12 +43,13 @@ class StockeMovementUpdateSerializer(serializers.ModelSerializer):
         new_quantity = validated_data.get("quantity")
         old_quantity = instance.quantity
         product = instance.product
+        ticket = instance.ticket
         diff = new_quantity - old_quantity
 
         # Update stock
-        if instance.ticket.type == "ENTRY":
+        if ticket.type == "ENTRY":
             product.stock += diff
-        elif instance.ticket.type == "MOVEMENT":
+        elif ticket.type == "MOVEMENT":
             product.stock -= diff
         else:
             return instance
@@ -61,17 +63,21 @@ class StockeMovementUpdateSerializer(serializers.ModelSerializer):
         instance.status = StockMovement.EDITED
         instance.save()
 
+        ticket.updated_at = timezone.now()
+        ticket.save()
+
         return instance
 
     def perform_destroy(self):
         instance = self.instance
         product = instance.product
+        ticket = instance.ticket
         quantity = instance.quantity
 
         # Update stock
-        if instance.ticket.type == "ENTRY":
+        if ticket.type == "ENTRY":
             product.stock -= quantity
-        elif instance.ticket.type == "MOVEMENT":
+        elif ticket.type == "MOVEMENT":
             product.stock += quantity
         else:
             return instance
@@ -83,3 +89,13 @@ class StockeMovementUpdateSerializer(serializers.ModelSerializer):
         # Save movement
         instance.status = StockMovement.DELETED
         instance.save()
+
+        ticket.updated_at = timezone.now()
+        ticket.save()
+
+
+class ProductMovementSummarySerializer(serializers.Serializer):
+    product_id = serializers.IntegerField(source="product")
+    name = serializers.CharField(source="product__name")
+    category = serializers.CharField(source="product__category")
+    total_quantity = serializers.IntegerField()

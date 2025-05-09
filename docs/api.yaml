@@ -383,6 +383,42 @@ paths:
       description: A unique integer value identifying this product.
       required: true
       type: integer
+  /warehouse/stock_movement/products:
+    get:
+      operationId: warehouse_stock_movement_products
+      description: ''
+      parameters:
+      - name: type
+        in: query
+        description: Type of ticket
+        required: true
+        type: string
+        default: ENTRY
+      - name: start_date
+        in: query
+        description: start_date
+        required: true
+        type: string
+      - name: end_date
+        in: query
+        description: end_date
+        required: true
+        type: string
+      - name: location
+        in: query
+        description: location id
+        required: false
+        type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductMovementSummary'
+      tags:
+      - warehouse
+    parameters: []
   /warehouse/stock_movement/{id}:
     put:
       operationId: warehouse_stock_movement_update
@@ -1075,6 +1111,28 @@ definitions:
         type: integer
         maximum: 2147483647
         minimum: -2147483648
+  ProductMovementSummary:
+    required:
+    - product_id
+    - name
+    - category
+    - total_quantity
+    type: object
+    properties:
+      product_id:
+        title: Product id
+        type: integer
+      name:
+        title: Name
+        type: string
+        minLength: 1
+      category:
+        title: Category
+        type: string
+        minLength: 1
+      total_quantity:
+        title: Total quantity
+        type: integer
   StockeMovementUpdate:
     required:
     - quantity
