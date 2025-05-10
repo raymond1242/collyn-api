@@ -37,6 +37,7 @@ class ProductViewset(
             .get_queryset()
             .filter(
                 company=company,
+                deleted=False,
             )
         )
 

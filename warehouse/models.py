@@ -44,6 +44,7 @@ class Product(models.Model):
     min_stock = models.IntegerField(default=0)
     stock = models.IntegerField(default=0)
     image = models.ImageField(upload_to="product/images", blank=True, null=True)
+    deleted = models.BooleanField(default=False)
 
 
 class Ticket(models.Model):
