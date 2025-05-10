@@ -336,38 +336,6 @@ paths:
       - warehouse
     parameters: []
   /warehouse/product/{id}:
-    put:
-      operationId: warehouse_product_update
-      description: ''
-      parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/ProductDetail'
-      responses:
-        '200':
-          description: ''
-          schema:
-            $ref: '#/definitions/ProductDetail'
-      tags:
-      - warehouse
-    patch:
-      operationId: warehouse_product_partial_update
-      description: ''
-      parameters:
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/ProductDetail'
-      responses:
-        '200':
-          description: ''
-          schema:
-            $ref: '#/definitions/ProductDetail'
-      tags:
-      - warehouse
     delete:
       operationId: warehouse_product_delete
       description: ''

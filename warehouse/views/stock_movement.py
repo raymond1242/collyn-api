@@ -87,13 +87,9 @@ class StockMovementViewSet(
         company = UserWarehouse.objects.get(user=user).company
 
         ticket_type = request.query_params.get("type", Ticket.ENTRY)
-        print(ticket_type)
         start_date = request.query_params.get("start_date")
-        print(start_date)
         end_date = request.query_params.get("end_date")
-        print(end_date)
         location = request.query_params.get("location")
-        print(location)
 
         location_filter = {}
         if location and ticket_type == Ticket.MOVEMENT:

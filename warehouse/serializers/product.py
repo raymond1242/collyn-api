@@ -50,3 +50,17 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             "stock": {"required": True},
             "category": {"required": True},
         }
+
+
+class ProductDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ["deleted"]
+        extra_kwargs = {
+            "deleted": {"required": True},
+        }
+
+    def perform_destroy(self):
+        instance = self.instance
+        instance.deleted = True
+        instance.save()
