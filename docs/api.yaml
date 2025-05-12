@@ -320,6 +320,21 @@ paths:
       tags:
       - warehouse
     parameters: []
+  /warehouse/product/low_stock:
+    get:
+      operationId: warehouse_product_low_stock
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductStock'
+      tags:
+      - warehouse
+    parameters: []
   /warehouse/product/stock:
     get:
       operationId: warehouse_product_stock

@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
 from rest_framework.decorators import action
+from django.db.models import F
 
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
@@ -46,6 +47,21 @@ class ProductViewset(
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        request_body=ProductCreateSerializer,
+        responses={status.HTTP_201_CREATED: ProductDetailSerializer},
+    )
+    def create(self, request, *args, **kwargs):
+        serializer = ProductCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.save(company=self.get_user_company().company)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            ProductDetailSerializer(product).data,
+            status=status.HTTP_201_CREATED,
+            headers=headers,
+        )
+
     def destroy(self, request, *args, **kwargs):
         stock_movement = self.get_object()
         serializer = ProductDeleteSerializer(stock_movement)
@@ -61,17 +77,9 @@ class ProductViewset(
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(
-        request_body=ProductCreateSerializer,
-        responses={status.HTTP_201_CREATED: ProductDetailSerializer},
-    )
-    def create(self, request, *args, **kwargs):
-        serializer = ProductCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        product = serializer.save(company=self.get_user_company().company)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            ProductDetailSerializer(product).data,
-            status=status.HTTP_201_CREATED,
-            headers=headers,
-        )
+    @action(methods=["GET"], detail=False, serializer_class=ProductStockSerializer)
+    def low_stock(self, request, pk=None):
+        queryset = self.get_queryset()
+        low_stock = queryset.filter(stock__lte=F("min_stock"))
+        serializer = self.get_serializer(low_stock, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
