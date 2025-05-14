@@ -402,6 +402,21 @@ paths:
       tags:
       - warehouse
     parameters: []
+  /warehouse/stock_movement/top_products:
+    get:
+      operationId: warehouse_stock_movement_top_products
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductMovementSummary'
+      tags:
+      - warehouse
+    parameters: []
   /warehouse/stock_movement/{id}:
     put:
       operationId: warehouse_stock_movement_update

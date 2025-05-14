@@ -1,3 +1,4 @@
+from datetime import timedelta
 from rest_framework import viewsets, mixins, status
 
 from rest_framework.response import Response
@@ -106,6 +107,33 @@ class StockMovementViewSet(
             .values("product", "product__name", "product__category")
             .annotate(total_quantity=Sum("quantity"))
             .order_by("product__category")
+        )
+
+        serializer = ProductMovementSummarySerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        responses={status.HTTP_200_OK: ProductMovementSummarySerializer(many=True)},
+    )
+    @action(methods=["GET"], detail=False)
+    def top_products(self, request):
+        user = self.request.user
+        company = UserWarehouse.objects.get(user=user).company
+
+        now = timezone.now()
+        start_date = now - timedelta(days=30)
+        end_date = now + timedelta(days=1)
+
+        queryset = (
+            StockMovement.objects.filter(
+                ticket__company=company,
+                ticket__type=Ticket.MOVEMENT,
+                ticket__created_at__range=[start_date, end_date],
+                status__in=[StockMovement.EDITED, StockMovement.NOT_EDITED],
+            )
+            .values("product", "product__name", "product__category")
+            .annotate(total_quantity=Sum("quantity"))
+            .order_by("-total_quantity")[:10]
         )
 
         serializer = ProductMovementSummarySerializer(queryset, many=True)
