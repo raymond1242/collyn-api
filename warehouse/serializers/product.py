@@ -64,3 +64,13 @@ class ProductDeleteSerializer(serializers.ModelSerializer):
         instance = self.instance
         instance.deleted = True
         instance.save()
+
+
+class ProductUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = [
+            "name",
+            "description",
+            "min_stock",
+        ]

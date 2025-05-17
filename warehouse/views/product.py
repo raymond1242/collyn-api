@@ -13,6 +13,7 @@ from warehouse.serializers.product import (
     ProductStockSerializer,
     ProductCreateSerializer,
     ProductDeleteSerializer,
+    ProductUpdateSerializer,
 )
 
 
@@ -20,6 +21,7 @@ class ProductViewset(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
 ):
     permission_classes = [IsAuthenticated]
@@ -59,6 +61,22 @@ class ProductViewset(
         return Response(
             ProductDetailSerializer(product).data,
             status=status.HTTP_201_CREATED,
+            headers=headers,
+        )
+
+    @swagger_auto_schema(
+        request_body=ProductUpdateSerializer,
+        responses={status.HTTP_200_OK: ProductDetailSerializer},
+    )
+    def update(self, request, *args, **kwargs):
+        product = self.get_object()
+        serializer = ProductUpdateSerializer(product, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            ProductDetailSerializer(product).data,
+            status=status.HTTP_200_OK,
             headers=headers,
         )
 
