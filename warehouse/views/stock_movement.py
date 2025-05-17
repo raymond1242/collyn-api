@@ -27,6 +27,20 @@ class StockMovementViewSet(
     serializer_class = StockMovementSerializer
     authentication_classes = [TokenAuthentication]
 
+    def get_user_company(self):
+        user_company = UserWarehouse.objects.get(user=self.request.user)
+        return user_company
+
+    def get_queryset(self):
+        company = self.get_user_company().company
+        return (
+            super(StockMovementViewSet, self)
+            .get_queryset()
+            .filter(
+                ticket__company=company,
+            )
+        )
+
     @swagger_auto_schema(
         request_body=StockeMovementUpdateSerializer,
         responses={status.HTTP_200_OK: StockMovementSerializer},
@@ -84,9 +98,6 @@ class StockMovementViewSet(
     )
     @action(methods=["GET"], detail=False)
     def products(self, request):
-        user = self.request.user
-        company = UserWarehouse.objects.get(user=user).company
-
         ticket_type = request.query_params.get("type", Ticket.ENTRY)
         start_date = request.query_params.get("start_date")
         end_date = request.query_params.get("end_date")
@@ -97,8 +108,8 @@ class StockMovementViewSet(
             location_filter["ticket__location"] = location
 
         queryset = (
-            StockMovement.objects.filter(
-                ticket__company=company,
+            self.get_queryset()
+            .filter(
                 ticket__type=ticket_type,
                 status__in=[StockMovement.EDITED, StockMovement.NOT_EDITED],
                 ticket__created_at__range=[start_date, end_date],
@@ -117,16 +128,13 @@ class StockMovementViewSet(
     )
     @action(methods=["GET"], detail=False)
     def top_products(self, request):
-        user = self.request.user
-        company = UserWarehouse.objects.get(user=user).company
-
         now = timezone.now()
         start_date = now - timedelta(days=30)
         end_date = now + timedelta(days=1)
 
         queryset = (
-            StockMovement.objects.filter(
-                ticket__company=company,
+            self.get_queryset()
+            .filter(
                 ticket__type=Ticket.MOVEMENT,
                 ticket__created_at__range=[start_date, end_date],
                 status__in=[StockMovement.EDITED, StockMovement.NOT_EDITED],
