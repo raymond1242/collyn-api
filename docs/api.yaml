@@ -351,6 +351,38 @@ paths:
       - warehouse
     parameters: []
   /warehouse/product/{id}:
+    put:
+      operationId: warehouse_product_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/ProductUpdate'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/ProductDetail'
+      tags:
+      - warehouse
+    patch:
+      operationId: warehouse_product_partial_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/ProductDetail'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/ProductDetail'
+      tags:
+      - warehouse
     delete:
       operationId: warehouse_product_delete
       description: ''
@@ -1106,6 +1138,26 @@ definitions:
         - SAUSAGES
       stock:
         title: Stock
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+  ProductUpdate:
+    required:
+    - name
+    - description
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        minLength: 1
+      min_stock:
+        title: Min stock
         type: integer
         maximum: 2147483647
         minimum: -2147483648
