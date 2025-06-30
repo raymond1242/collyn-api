@@ -98,6 +98,6 @@ class ProductViewset(
     @action(methods=["GET"], detail=False, serializer_class=ProductStockSerializer)
     def low_stock(self, request, pk=None):
         queryset = self.get_queryset()
-        low_stock = queryset.filter(stock__lte=F("min_stock"))
+        low_stock = queryset.filter(stock__lte=F("min_stock"))[:8]
         serializer = self.get_serializer(low_stock, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
